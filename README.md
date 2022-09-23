@@ -33,10 +33,10 @@ Then the executable will be in `./build/Release/` directory.
 ## Usage
 
 ```bash
-./devInfoDumper
+./devInfoDumper <filename>.json
 ```
 
-Then there are both `stdout` and `file.json` about device information.
+Then there are both `stdout` and `<filename>.json` about device information.
 
 ## Note
 

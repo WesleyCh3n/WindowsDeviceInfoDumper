@@ -17,20 +17,20 @@ static const DWORD BUFSIZE = 1024;
 // https://learn.microsoft.com/zh-tw/windows-hardware/drivers/install/accessing-device-instance-spdrp-xxx-properties
 //
 int main(int argc, char *argv[]) {
-  int res = 0;
+  if (argc < 2) {
+    std::cerr << "Usage\n\t./devInfoDumper <filename>.json\n";
+    exit(EXIT_FAILURE);
+  }
   HDEVINFO hDevInfo;
   SP_DEVINFO_DATA devInfoData;
-  DWORD i;
-  std::ofstream file("file.json");
 
   hDevInfo = SetupDiGetClassDevsA(NULL, 0, 0, DIGCF_PRESENT | DIGCF_ALLCLASSES);
-
   if (hDevInfo == INVALID_HANDLE_VALUE) {
-    res = GetLastError();
     std::cout << "[Error]: INVALID_HANDLE_VALUE\n";
-    return res;
+    return GetLastError();
   }
 
+  std::ofstream file(argv[1]);
   char devBuf[BUFSIZE] = {0};
   devInfoData.cbSize = sizeof(SP_DEVINFO_DATA);
 
@@ -47,7 +47,7 @@ int main(int argc, char *argv[]) {
   }
 
   file << "[\n";
-  for (i = 0; SetupDiEnumDeviceInfo(hDevInfo, i, &devInfoData); i++) {
+  for (DWORD i = 0; SetupDiEnumDeviceInfo(hDevInfo, i, &devInfoData); i++) {
     file << "  {\n";
 
     RUN_INFERENCE(SPDRP_CLASS, "Class")
