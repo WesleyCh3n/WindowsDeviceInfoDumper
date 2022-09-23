@@ -6,6 +6,7 @@ about installed device using Windows SDK API.
 ## Build Requirements
 
 Tested with
+
 - Windows 10 21H2 (1904 build)
 - MSVC 2019
 - CMake 3.21.3
@@ -39,4 +40,5 @@ Then there are both `stdout` and `file.json` about device information.
 
 ## Note
 
-If json value showing `[Error: #]`, `#` is [windows system error code](https://learn.microsoft.com/en-us/windows/win32/debug/system-error-codes--0-499-). Go check out doc to see what happened.
+If json value showing `[Error: #]`, `#` is [windows system error code](https://learn.microsoft.com/en-us/windows/win32/debug/system-error-codes--0-499-).
+Go check out doc to see what happened.

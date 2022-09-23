@@ -42,7 +42,7 @@ int main(int argc, char *argv[]) {
       std::cout << #NAME << ": " << devBuf << '\n';                            \
     } else {                                                                   \
       file << "    " << #NAME << ": \"[Error: " << GetLastError() << "]\"";    \
-      std::cout << #NAME << ": [Error:" << GetLastError() << "\n";             \
+      std::cout << #NAME << ": [Error:" << GetLastError() << "]\n";            \
     }                                                                          \
   }
 
