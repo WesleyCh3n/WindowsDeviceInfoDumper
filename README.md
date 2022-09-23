@@ -1,7 +1,7 @@
 # Device Info Dumper
 
 This is a minimum c++ example to dump information (hardware ID, manufacturer etc..)
-about installed device using windows SDK API.
+about installed device using Windows SDK API.
 
 ## Build Requirements
 
@@ -16,17 +16,18 @@ Clone the repository
 
 ```bash
 git clone https://github.com/WesleyCh3n/WindowsDeviceInfoDumper.git
-cd WindowsDeviceInfoDumper && mkdir build && cd build
+cd WindowsDeviceInfoDumper
 ```
 
 CMake the project
 
 ```bash
+mkdir build && cd build
 cmake ..
 cmake --build . --config Release
 ```
 
-Then the executable will be in `./Release` directory.
+Then the executable will be in `./build/Release/` directory.
 
 ## Usage
 
