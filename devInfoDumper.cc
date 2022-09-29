@@ -50,19 +50,19 @@ int main(int argc, char *argv[]) {
   for (DWORD i = 0; SetupDiEnumDeviceInfo(hDevInfo, i, &devInfoData); i++) {
     file << "  {\n";
 
-    RUN_INFERENCE(SPDRP_CLASS, "Class")
+    RUN_INFERENCE(SPDRP_CLASS, "class")
     file << ",\n";
-    RUN_INFERENCE(SPDRP_ENUMERATOR_NAME, "Enumerator Name")
+    RUN_INFERENCE(SPDRP_ENUMERATOR_NAME, "enumerator")
     file << ",\n";
-    RUN_INFERENCE(SPDRP_DEVICEDESC, "Description")
+    RUN_INFERENCE(SPDRP_DEVICEDESC, "description")
     file << ",\n";
-    RUN_INFERENCE(SPDRP_MFG, "Manufacturer")
+    RUN_INFERENCE(SPDRP_MFG, "manufacturer")
     file << ",\n";
-    RUN_INFERENCE(SPDRP_HARDWAREID, "Hardware ID")
+    RUN_INFERENCE(SPDRP_HARDWAREID, "hardware_id")
     file << ",\n";
-    RUN_INFERENCE(SPDRP_COMPATIBLEIDS, "Compatible ID")
+    RUN_INFERENCE(SPDRP_COMPATIBLEIDS, "compatible_id")
     file << ",\n";
-    RUN_INFERENCE(SPDRP_CLASSGUID, "Class GUID")
+    RUN_INFERENCE(SPDRP_CLASSGUID, "class_guid")
 
     file << "\n  }";
     // check if next loop is ending, if not ended add comma
