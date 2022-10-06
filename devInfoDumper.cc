@@ -4,8 +4,15 @@
 #include <devguid.h>
 #include <winioctl.h>
 
+// disable codecvt deprecated warning
+#define _SILENCE_CXX17_CODECVT_HEADER_DEPRECATION_WARNING
+// or
+// #pragma warning(disable : 4996)
+
+#include <codecvt>
 #include <fstream>
 #include <iostream>
+#include <locale>
 
 #pragma comment(lib, "Setupapi.lib")
 
@@ -24,55 +31,52 @@ int main(int argc, char *argv[]) {
   HDEVINFO hDevInfo;
   SP_DEVINFO_DATA devInfoData;
 
-  hDevInfo = SetupDiGetClassDevsA(NULL, 0, 0, DIGCF_PRESENT | DIGCF_ALLCLASSES);
+  hDevInfo = SetupDiGetClassDevsW(NULL, 0, 0, DIGCF_PRESENT | DIGCF_ALLCLASSES);
   if (hDevInfo == INVALID_HANDLE_VALUE) {
     std::cout << "[Error]: INVALID_HANDLE_VALUE\n";
     return GetLastError();
   }
 
-  std::ofstream file(argv[1]);
-  char devBuf[BUFSIZE] = {0};
+  std::wofstream fileW(argv[1], std::ios::binary);
+  wchar_t devBufW[BUFSIZE] = {0};
   devInfoData.cbSize = sizeof(SP_DEVINFO_DATA);
+  fileW.imbue(
+      std::locale(fileW.getloc(), new std::codecvt_utf8_utf16<wchar_t>));
 
 #define RUN_INFERENCE(P, NAME)                                                 \
   {                                                                            \
-    if (SetupDiGetDeviceRegistryPropertyA(hDevInfo, &devInfoData, P, nullptr,  \
-                                          (PBYTE)devBuf, BUFSIZE, nullptr)) {  \
-      file << "    " << #NAME << ": \"" << devBuf << "\"";                     \
-      std::cout << #NAME << ": " << devBuf << '\n';                            \
+    if (SetupDiGetDeviceRegistryPropertyW(hDevInfo, &devInfoData, P, nullptr,  \
+                                          (PBYTE)devBufW, BUFSIZE, nullptr)) { \
+      fileW << "    " << #NAME << ": \"" << devBufW << "\"";                   \
     } else {                                                                   \
-      file << "    " << #NAME << ": \"[Error: " << GetLastError() << "]\"";    \
-      std::cout << #NAME << ": [Error:" << GetLastError() << "]\n";            \
+      fileW << "    " << #NAME << ": \"[Error: " << GetLastError() << "]\"";   \
     }                                                                          \
   }
-
-  file << "[\n";
+  fileW << "[\n";
   for (DWORD i = 0; SetupDiEnumDeviceInfo(hDevInfo, i, &devInfoData); i++) {
-    file << "  {\n";
-
+    fileW << "  {\n";
     RUN_INFERENCE(SPDRP_CLASS, "class")
-    file << ",\n";
+    fileW << ",\n";
     RUN_INFERENCE(SPDRP_ENUMERATOR_NAME, "enumerator")
-    file << ",\n";
+    fileW << ",\n";
     RUN_INFERENCE(SPDRP_DEVICEDESC, "description")
-    file << ",\n";
+    fileW << ",\n";
     RUN_INFERENCE(SPDRP_MFG, "manufacturer")
-    file << ",\n";
+    fileW << ",\n";
     RUN_INFERENCE(SPDRP_HARDWAREID, "hardware_id")
-    file << ",\n";
+    fileW << ",\n";
     RUN_INFERENCE(SPDRP_COMPATIBLEIDS, "compatible_id")
-    file << ",\n";
+    fileW << ",\n";
     RUN_INFERENCE(SPDRP_CLASSGUID, "class_guid")
 
-    file << "\n  }";
+    fileW << "\n  }";
     // check if next loop is ending, if not ended add comma
     if (SetupDiEnumDeviceInfo(hDevInfo, i + 1, &devInfoData)) {
-      file << ",";
-      std::cout << '\n';
+      fileW << ",";
     }
-    file << '\n';
+    fileW << '\n';
   }
-  file << "]\n";
+  fileW << "]\n";
 
   if (GetLastError() != NO_ERROR && GetLastError() != ERROR_NO_MORE_ITEMS) {
     std::cout << "[Error]: " << GetLastError() << '\n';
@@ -80,6 +84,7 @@ int main(int argc, char *argv[]) {
   }
 
   SetupDiDestroyDeviceInfoList(hDevInfo);
+  std::cout << "Finished!\n";
 
   return 0;
 }
